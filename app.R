@@ -1,6 +1,7 @@
 library(shiny)
 library(shiny.semantic)
 library(ggplot2)
+Sys.setenv(PATH=paste0("/usr/local/texlive/2021/bin/x86_64-linux/:",Sys.getenv("PATH")))
 
 grid_charts <- grid_template(
     default = list(areas = rbind(c("chart1")),
