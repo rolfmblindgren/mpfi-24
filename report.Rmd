@@ -1,0 +1,39 @@
+---
+title: "mpfi-24"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    includes:
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{sabon}
+- \pagestyle{empty}
+classoption: a4paper
+params:
+  n: NA
+---
+```{r echo=FALSE,results='asis',warning=FALSE,comments=FALSE,message=FALSE}
+library(proxy)
+library(xtable)
+options(xtable.comment=FALSE) 
+
+
+my_data <- params$n[[1]]
+
+   df <- data.frame(
+            Skala <- c(colnames(my_data[my_scales]),
+                       c("","Fleksibilitet","Rigiditet")),
+            Skår <- c(as.vector(unlist(my_data[my_scales])),NA,
+                      c(mean(as.numeric(my_data[my_scales_f])),
+                        mean(as.numeric(my_data[my_scales_r])))))
+        
+        colnames(df) <- c("Skala","Skår")
+                                        #        df$Skala <- factor(df$Skala, levels = df$Skala[order(df$Skår)])
+        df$Skala <- factor(df$Skala, levels = df$Skala)
+
+       
+        ggplot(df,aes(x=Skala,y=Skår,fill=Skår)) +
+            theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+                  legend.position="none") +
+            geom_bar(stat = "identity")
+```
