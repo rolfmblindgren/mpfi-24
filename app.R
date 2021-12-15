@@ -111,4 +111,4 @@ server <- shinyServer(function(input, output, session) {
 
 
 
-Shinyapp(ui = ui, server = server)
+shinyApp(ui = ui, server = server)
