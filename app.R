@@ -56,7 +56,7 @@ server <- shinyServer(function(input, output, session) {
                 n = list(
                     my_data[which(
                         my_data[,"Klientens.id"]==session$input$simple_dropdown),],
-                    my_scales))
+                    my_scales,my_scales_f,my_scales_r))
             
             ## Knit the document, passing in the `params` list, and eval it
             ## in a child of the global environment (this isolates the code

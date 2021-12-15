@@ -19,6 +19,9 @@ options(xtable.comment=FALSE)
 
 
 my_data <- params$n[[1]]
+my_scales <- params$n[[2]]
+my_scales_f <- params$n[[3]]
+my_scales_r <- params$n[[4]]
 
    df <- data.frame(
             Skala <- c(colnames(my_data[my_scales]),
