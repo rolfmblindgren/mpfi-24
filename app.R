@@ -3,10 +3,9 @@ library(shiny.semantic)
 library(ggplot2)
 
 grid_charts <- grid_template(
-    default = list(areas = rbind(c("chart1"#, "chart2"
-                                   )),
-                   rows_height = c("100%","100%"),
-                   cols_width = c("85.71429%", "14.28571%"))
+    default = list(areas = rbind(c("chart1")),
+                   rows_height = c("100%"),
+                   cols_width = c("100%"))
 )
 
 my_data <- read.csv("https://eu.jotform.com/csv/213463841840051")
@@ -18,7 +17,7 @@ my_scales_r <- c(37:42)
 
 ui <- semanticPage(
     title = "MPFI 24-kalkulator",
-    h1("Kalkulatoren"),
+    h1("MPFI 24-kalkulator"),
     sidebar_layout(
         sidebar_panel(
             dropdown_input(
@@ -26,7 +25,8 @@ ui <- semanticPage(
                 my_data["Klientens.id"],
                 type = "search selection"),
             p("Selected client:"),
-            textOutput("selected_client")), 
+            textOutput("selected_client"), 
+            downloadButton("report", "Generate report")), 
         main_panel(
             grid(grid_charts,
                  chart1 = plotOutput("plot1")#,chart2 = plotOutput("plot2")
@@ -37,6 +37,40 @@ ui <- semanticPage(
 
 server <- shinyServer(function(input, output, session) {
 
+        output$report <- downloadHandler(
+        ## For PDF output, change this to "report.pdf"
+        filename <- function() {
+            paste0(session$input$simple_dropdown,".pdf")
+        },
+
+        content <- function(file) {
+            ## Copy the report file to a temporary directory before
+            ## processing it, in case we don't have write permissions to the
+            ## current working dir (which can happen when deployed).
+            tempReport <- file.path(tempdir(), "report.Rmd")
+            file.copy("report.Rmd", tempReport, overwrite = TRUE)
+
+            
+            ## Set up parameters to pass to Rmd document
+            params <- list(
+                n = list(my_data[which(
+                    my_data[,"Klientens.id"]==session$input$simple_dropdown),]))
+
+            ## Knit the document, passing in the `params` list, and eval it
+            ## in a child of the global environment (this isolates the code
+            ## in the document from the code in this app).
+	message(Sys.getenv("PATH"))
+            rmarkdown::render(tempReport, output_file = file,
+                              params = params,
+                              envir = new.env(parent = globalenv())
+                              )
+        }
+
+
+    )
+
+
+    
     output$selected_client <-
         renderText({
         
@@ -77,4 +111,4 @@ server <- shinyServer(function(input, output, session) {
 
 
 
-shinyApp(ui = ui, server = server)
+Shinyapp(ui = ui, server = server)
