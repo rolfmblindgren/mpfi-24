@@ -53,9 +53,11 @@ server <- shinyServer(function(input, output, session) {
             
             ## Set up parameters to pass to Rmd document
             params <- list(
-                n = list(my_data[which(
-                    my_data[,"Klientens.id"]==session$input$simple_dropdown),]))
-
+                n = list(
+                    my_data[which(
+                        my_data[,"Klientens.id"]==session$input$simple_dropdown),],
+                    my_scales))
+            
             ## Knit the document, passing in the `params` list, and eval it
             ## in a child of the global environment (this isolates the code
             ## in the document from the code in this app).
